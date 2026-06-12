@@ -99,11 +99,10 @@ async def analyze_log(
         get_anomaly_score,
         bundle.vector,
     )
-    triggered_rules, rule_penalty = await run_in_threadpool(
-        evaluate_rules,
-        request,
-        bundle.raw_values,
-    )
+    rule_result = evaluate_rules(request, bundle.raw_values)
+
+    triggered_rules = rule_result.triggered_rules
+    rule_penalty = rule_result.penalty
 
     final_score = combine_scores(model_score, rule_penalty)
     decision = evaluate_thresholds(final_score)

@@ -1,0 +1,39 @@
+{
+  "version": "0.2",
+  "language": "en,ja",
+  "words": [
+    "sqlmap",
+    "masscan",
+    "nmap",
+    "sqli",
+    "thresholding",
+    "Pydantic",
+    "FastAPI",
+    "uvicorn",
+    "MLflow",
+    "MLOps",
+    "OWASP",
+    "RBAC",
+    "SBOM",
+    "Trivy",
+    "Evidently",
+    "Kubernetes",
+    "PostgreSQL",
+    "Alembic",
+    "Passlib",
+    "Grafana",
+    "Prometheus",
+    "CloudWatch",
+    "Terraform",
+    "FinOps",
+    "IRSA",
+    "Entra",
+    "Sentinel"
+  ],
+  "ignorePaths": [
+    "venv",
+    "__pycache__",
+    ".pytest_cache",
+    ".ruff_cache"
+  ]
+}

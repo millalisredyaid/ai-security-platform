@@ -129,7 +129,8 @@ def evaluate_rules(
         penalty -= 0.12
 
     logger.info(
-        "Rule evaluation completed: endpoint=%s rules=%s penalty=%.4f matches=%s",
+        "Rule evaluation completed: endpoint=%s rules=%s "
+        "penalty=%.4f matches=%s",
         request.endpoint,
         triggered_rules,
         penalty,

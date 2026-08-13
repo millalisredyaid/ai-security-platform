@@ -90,7 +90,7 @@ the following diagram outlines the **target architecture** the project is intend
 This diagram illustrates the intended end-state design that guides future development across backend services, AI/ML, observability, and platform infrastructure.
 
 <p align="center">
-  <img src="assets/ai-security-architecture-2026-06-19.png" width="900" alt="Target System Architecture">
+  <img src="assets/architecture.png" width="900" alt="Target System Architecture">
 </p>
 
 ## 🔍 Architecture Breakdown  (Loosely Coupled Component Design)

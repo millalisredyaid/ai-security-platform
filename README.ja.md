@@ -92,7 +92,7 @@ Phase 0 の FastAPI 基盤構築は完了し、現在は Phase 1: AI異常検知
 最終的なシステム設計（エンドステート・デザイン）を示しています。
 
 <p align="center">
-  <img src="assets/ai-security-architecture-2026-06-19.png" width="900">
+  <img src="assets/architecture.png" width="900" alt="Target System Architecture">
 </p>
 
 ## 🔍 アーキテクチャの構成解剖：疎結合コンポーネントによる設計思想 (Architecture Breakdown)

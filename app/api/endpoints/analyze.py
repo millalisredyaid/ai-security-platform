@@ -1,17 +1,14 @@
 import logging
 
-from fastapi import APIRouter, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, Request
 from starlette.concurrency import run_in_threadpool
 
 from app.engines.rules import evaluate_rules
 from app.logic.scoring import combine_scores
 from app.logic.thresholding import evaluate_thresholds
 from app.schemas.request import AnalyzeRequest
-from app.schemas.response import (
-    AnalyzeResponse,
-    RecommendedAction,
-    SeverityLevel,
-)
+from app.schemas.response import (AnalyzeResponse, RecommendedAction,
+                                  SeverityLevel)
 from app.services.feature_engineering import extract_features
 from app.services.inference import get_anomaly_score
 from app.tasks.security_events import emit_security_decision_log
@@ -85,21 +82,25 @@ def build_human_readable_details(
 
 @router.post("", response_model=AnalyzeResponse)
 async def analyze_log(
-    request: AnalyzeRequest,
+    request: Request,
+    payload: AnalyzeRequest,
     background_tasks: BackgroundTasks,
 ):
+    request_id = request.state.request_id
+
     logger.info(
-        "Analyze request received: client_ip=%s endpoint=%s",
-        request.client_ip,
-        request.endpoint,
+        "Analyze request received: request_id=%s client_ip=%s endpoint=%s",
+        request_id,
+        payload.client_ip,
+        payload.endpoint,
     )
 
-    bundle = await run_in_threadpool(extract_features, request)
+    bundle = await run_in_threadpool(extract_features, payload)
     model_score, model_reasons = await run_in_threadpool(
         get_anomaly_score,
         bundle.vector,
     )
-    rule_result = evaluate_rules(request, bundle.raw_values)
+    rule_result = evaluate_rules(payload, bundle.raw_values)
 
     triggered_rules = rule_result.triggered_rules
     rule_penalty = rule_result.penalty
@@ -113,7 +114,7 @@ async def analyze_log(
     )
 
     details = build_human_readable_details(
-        endpoint=request.endpoint,
+        endpoint=payload.endpoint,
         severity=decision.severity,
         model_reasons=model_reasons,
         has_rule_hits=bool(triggered_rules),
@@ -121,8 +122,9 @@ async def analyze_log(
 
     security_decision_log = {
         "event": "security_decision",
-        "endpoint": request.endpoint,
-        "client_ip": request.client_ip,
+        "request_id": request_id,
+        "endpoint": payload.endpoint,
+        "client_ip": payload.client_ip,
         "severity": decision.severity.value,
         "action": recommended_action.value,
         "is_anomaly": decision.is_anomaly,
@@ -149,6 +151,6 @@ async def analyze_log(
         severity=decision.severity,
         action=recommended_action,
         triggered_rules=triggered_rules,
-        received_path=request.path,
+        received_path=payload.path,
         details=details,
     )
